@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Sheeraw 🌸</title>
+    <style>
+        :root {
+            --bg-color: #fff9f9;
+            --text-color: #4a4a4a;
+            --accent: #ff8fa3;
+            --deep-rose: #d81b60;
+        }
+        
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg-color);
+            font-family: 'Georgia', serif;
+            color: var(--text-color);
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        /* 1. Entry Screen */
+        #entry-screen {
+            position: fixed; width: 100%; height: 100%;
+            background: white; z-index: 2000;
+            display: flex; justify-content: center; align-items: center;
+            text-align: center;
+        }
+
+        .start-btn {
+            padding: 15px 40px; font-size: 1.2rem;
+            background: var(--accent); color: white;
+            border: none; border-radius: 30px; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 143, 163, 0.4);
+            transition: transform 0.2s;
+        }
+        .start-btn:hover { transform: scale(1.05); }
+
+        /* 2. Scrapbook Scenes */
+        .scene {
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            padding: 60px 20px;
+            opacity: 0; transform: translateY(50px);
+            transition: all 1s ease-out;
+        }
+
+        .scene.visible {
+            opacity: 1; transform: translateY(0);
+        }
+
+        .polaroid {
+            background: white; padding: 15px 15px 60px 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 90%; width: 400px;
+            margin-bottom: 30px;
+        }
+
+        .polaroid img { width: 100%; height: auto; display: block; border: 1px solid #eee; }
+
+        .message {
+            font-size: 1.3rem; text-align: center;
+            max-width: 500px; line-height: 1.6;
+            font-style: italic;
+        }
+
+        .divider { width: 60px; height: 2px; background: var(--accent); margin: 25px 0; }
+
+        /* 3. Response Section */
+        #response-buttons {
+            margin-top: 30px; display: flex; gap: 20px;
+            position: relative; height: 60px; align-items: center;
+        }
+
+        #final-message {
+            margin-top: 40px; display: none; text-align: center;
+            padding: 20px; background: white; border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+
+        .date-highlight {
+            color: var(--deep-rose); font-weight: bold; font-size: 1.6rem;
+            display: block; margin-top: 15px;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .scroll-hint { margin-top: 20px; animation: bounce 2s infinite; font-size: 0.9rem; color: #888; }
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="entry-screen">
+        <div>
+            <h1>Hey Sheeraw... 🌸</h1>
+            <p>I made something special for you.</p>
+            <button class="start-btn" onclick="openScrapbook()">Open Your Gift ❤️</button>
+        </div>
+    </div>
+
+    <section class="scene" id="scene1">
+        <div class="polaroid" style="transform: rotate(-2deg);">
+            <img src="scene1.png" alt="Dreamy Garden">
+        </div>
+        <div class="message">"I wanted to build a world as beautiful as the one I see when I'm with you."</div>
+        <div class="divider"></div>
+        <div class="scroll-hint">Scroll down... ↓</div>
+    </section>
+
+    <section class="scene" id="scene2">
+        <div class="polaroid" style="transform: rotate(3deg);">
+            <img src="scene2.png" alt="Queen Sheeraw">
+        </div>
+        <div class="message">"There is a grace and a glow about you, Sheeraw, that makes everything else fade away."</div>
+        <div class="divider"></div>
+    </section>
+
+    <section class="scene" id="scene3">
+        <div class="polaroid" style="transform: rotate(-1deg);">
+            <img src="pic1.jpeg" alt="Sheeraw in Pink">
+        </div>
+        <div class="message">"This is my favorite photo of you. You look absolutely breathtaking, and that smile is my favorite view."</div>
+        <div class="divider"></div>
+    </section>
+
+    <section class="scene" id="scene4">
+        <div class="polaroid" style="transform: rotate(1deg);">
+            <img src="scene4.png" alt="The Proposal">
+        </div>
+        <div class="message">
+            <h2 style="color: var(--deep-rose);">Sheeraw...</h2>
+            "I don't just want to be a memory. I want to be your future. I want to be the one holding your hand through it all."
+            <br><br>
+            <strong>Will you be my girlfriend?</strong>
+        </div>
+
+        <div id="response-buttons">
+            <button class="start-btn" onclick="handleResponse('yes')" style="background: #4CAF50;">Yes! ❤️</button>
+            <button class="start-btn" id="no-btn" onmouseover="moveNoButton()" onclick="handleResponse('no')" style="background: #f44336;">No 🥺</button>
+        </div>
+
+        <div id="final-message">
+            <h1 id="reply-text" style="color: var(--deep-rose); font-size: 2.2rem; margin: 0;"></h1>
+            <p id="sub-text" style="font-size: 1.2rem; line-height: 1.5;"></p>
+        </div>
+    </section>
+
+    <script>
+        function openScrapbook() {
+            document.getElementById('entry-screen').style.display = 'none';
+            document.getElementById('bgMusic').play();
+            checkVisibility();
+        }
+
+        function checkVisibility() {
+            const scenes = document.querySelectorAll('.scene');
+            scenes.forEach(scene => {
+                const rect = scene.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.85) {
+                    scene.classList.add('visible');
+                }
+            });
+        }
+
+        function moveNoButton() {
+            const noBtn = document.getElementById('no-btn');
+            // Makes the button jump around when she tries to click it
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = Math.random() * 80 + 'vw';
+            noBtn.style.top = Math.random() * 80 + 'vh';
+            noBtn.style.zIndex = '5000';
+        }
+
+        function handleResponse(choice) {
+            const buttonArea = document.getElementById('response-buttons');
+            const finalArea = document.getElementById('final-message');
+            const replyText = document.getElementById('reply-text');
+            const subText = document.getElementById('sub-text');
+
+            if (choice === 'yes') {
+                buttonArea.style.display = 'none';
+                finalArea.style.display = 'block';
+                
+                replyText.innerText = "It's Official! ❤️";
+                subText.innerHTML = "You've made me the happiest guy, Sheeraw. I promise to cherish you.<br>" +
+                                   "<span class='date-highlight'>" +
+                                   "Get ready... We have a date on <br>Thursday, February 19th, 2026! 🌹" +
+                                   "</span>";
+                
+                // Start the heart celebration
+                for(let i=0; i<50; i++) { 
+                    setTimeout(createHeart, i * 100); 
+                }
+            } else {
+                alert("The 'No' button is currently out of service. Please try the green one! 😉");
+            }
+        }
+
+        function createHeart() {
+            const h = document.createElement('div');
+            h.style.position = 'fixed';
+            h.style.color = '#ff8fa3';
+            h.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+            h.innerHTML = '❤️';
+            h.style.left = Math.random() * 100 + 'vw';
+            h.style.bottom = '-10vh';
+            h.style.zIndex = '3000';
+            h.style.transition = 'transform 4s linear, opacity 4s';
+            document.body.appendChild(h);
+            
+            setTimeout(() => {
+                h.style.transform = `translateY(-110vh) translateX(${(Math.random() - 0.5) * 150}px) rotate(${Math.random() * 360}deg)`;
+                h.style.opacity = '0';
+            }, 100);
+            setTimeout(() => h.remove(), 4000);
+        }
+
+        window.addEventListener('scroll', checkVisibility);
+    </script>
+</body>
+</html>
